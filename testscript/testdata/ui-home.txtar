@@ -1,0 +1,205 @@
+# vi: set ft=conf
+
+# convert crlf to lf on windows
+[windows] dos2unix home-in.txt home.txt about-in.txt about.txt
+
+# test repositories tab
+ui home-in.txt
+cmp stdout home.txt
+
+# test about tab
+ui about-in.txt
+cmp stdout about.txt
+
+# add a new repo
+soft repo create .soft-serve -n 'Config' -d '"Test Soft Serve"'
+soft repo description .soft-serve
+stdout 'Test Soft Serve'
+soft repo project-name .soft-serve
+stdout 'Config'
+
+# clone repo
+git clone ssh://localhost:$SSH_PORT/.soft-serve config
+
+# create readme file
+mkfile ./config/README.md '# Hello World\nTest Soft Serve'
+git -C config add -A
+git -C config commit -m 'Initial commit'
+git -C config push origin HEAD
+
+# test repositories tab
+ui home-in.txt
+cmpenv stdout home2.txt
+
+# test about tab
+ui about-in.txt
+cmp stdout about2.txt
+
+-- home-in.txt --
+    q
+-- home.txt --
+[?25l[?1049h[2J[1;1H[1;1H[?25l[?1002h                                                                                
+   [48;5;57m [0m[1;38;5;229;48;5;57mTest Soft Serve[0m[48;5;57m [0m                                                            
+                                                                                
+  [38;5;36m• [0m[38;5;36mRepositories[0m    About                                                       
+                                                                                
+    [38;5;242mNo items found.[0m                                                             
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+   [38;5;241m↑↓[0m [38;5;239mnavigate[0m[38;5;59m • [0m[38;5;241mtab[0m [38;5;239msection[0m[38;5;59m • [0m[38;5;241menter[0m [38;5;239mselect[0m[38;5;59m • [0m[38;5;241mc[0m [38;5;239mcopy command[0m[38;5;59m • [0m[38;5;241mq[0m [38;5;239mquit[0m [38;5;59m…[0m         
+                                                                                [40;0H[2K[?25h[?1002l[?1003l[?1049l[?25h
+-- home2.txt --
+[?25l[?1049h[2J[1;1H[1;1H[?25l[?1002h                                                                                
+   [48;5;57m [0m[1;38;5;229;48;5;57mTest Soft Serve[0m[48;5;57m [0m                                                            
+                                                                                
+  [38;5;36m• [0m[38;5;36mRepositories[0m    About                                                       
+                                                                                
+  [38;5;176m┃[0m [1;38;5;212mConfig [0m                                                       [38;5;212m Updated now[0m  
+  [38;5;176m┃[0m [38;5;246mTest Soft Serve[0m                                                             
+  [38;5;176m┃[0m [38;5;204mgit clone ssh://localhost:$SSH_PORT/.soft-serve.git[0m                             
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+   [38;5;241m↑↓[0m [38;5;239mnavigate[0m[38;5;59m • [0m[38;5;241mtab[0m [38;5;239msection[0m[38;5;59m • [0m[38;5;241menter[0m [38;5;239mselect[0m[38;5;59m • [0m[38;5;241m/[0m [38;5;239mfilter[0m[38;5;59m • [0m[38;5;241mc[0m [38;5;239mcopy command[0m [38;5;59m…[0m       
+                                                                                [40;0H[2K[?25h[?1002l[?1003l[?1049l[?25h
+-- about-in.txt --
+	    q
+-- about.txt --
+[?25l[?1049h[2J[1;1H[1;1H[?25l[?1002h                                                                                
+   [48;5;57m [0m[1;38;5;229;48;5;57mTest Soft Serve[0m[48;5;57m [0m                                                            
+                                                                                
+    Repositories  [38;5;36m• [0m[38;5;36mAbout[0m                                                       
+                                                                                
+    [38;5;242mNo readme found.[0m                                                            
+    [38;5;242m[0m                                                                            
+    [38;5;242mCreate a `.soft-serve` repository and add a `README.md` file to display re[0m  
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                        [38;5;241m☰ 100%[0m  
+                                                                                
+   [38;5;241m↑↓[0m [38;5;239mnavigate[0m[38;5;59m • [0m[38;5;241mtab[0m [38;5;239msection[0m[38;5;59m • [0m[38;5;241mq[0m [38;5;239mquit[0m[38;5;59m • [0m[38;5;241m?[0m [38;5;239mtoggle help[0m                           
+                                                                                [40;0H[2K[?25h[?1002l[?1003l[?1049l[?25h
+-- about2.txt --
+[?25l[?1049h[2J[1;1H[1;1H[?25l[?1002h                                                                                
+   [48;5;57m [0m[1;38;5;229;48;5;57mTest Soft Serve[0m[48;5;57m [0m                                                            
+                                                                                
+    Repositories  [38;5;36m• [0m[38;5;36mAbout[0m                                                       
+                                                                                
+  [38;5;39;1m[0m[38;5;39;1m[0m  [38;5;39;1m# [0m[38;5;39;1mHello World\nTest Soft[0m[38;5;39;1m Serve[0m                                              
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                        [38;5;241m☰ 100%[0m  
+                                                                                
+   [38;5;241m↑↓[0m [38;5;239mnavigate[0m[38;5;59m • [0m[38;5;241mtab[0m [38;5;239msection[0m[38;5;59m • [0m[38;5;241mq[0m [38;5;239mquit[0m[38;5;59m • [0m[38;5;241m?[0m [38;5;239mtoggle help[0m                           
+                                                                                [40;0H[2K[?25h[?1002l[?1003l[?1049l[?25h

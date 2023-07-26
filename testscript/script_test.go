@@ -5,6 +5,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"io"
 	"net"
 	"os"
 	"path/filepath"
@@ -13,6 +14,7 @@ import (
 	"testing"
 	"time"
 
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/keygen"
 	"github.com/charmbracelet/log"
 	"github.com/charmbracelet/soft-serve/server"
@@ -52,6 +54,8 @@ func TestScript(t *testing.T) {
 		Dir:           "./testdata/",
 		UpdateScripts: *update,
 		Cmds: map[string]func(ts *testscript.TestScript, neg bool, args []string){
+			"ui":       cmdUI(admin1.Signer()),
+			"uui":      cmdUI(user1.Signer()),
 			"soft":     cmdSoft(admin1.Signer()),
 			"usoft":    cmdSoft(user1.Signer()),
 			"git":      cmdGit(key),
@@ -196,6 +200,58 @@ func cmdSoft(key ssh.Signer) func(ts *testscript.TestScript, neg bool, args []st
 
 		check(ts, sess.Run(strings.Join(args, " ")), neg)
 	}
+}
+
+func cmdUI(key ssh.Signer) func(ts *testscript.TestScript, neg bool, args []string) {
+	return func(ts *testscript.TestScript, neg bool, args []string) {
+		if len(args) < 1 {
+			ts.Fatalf("usage: ui <stdin file>")
+			return
+		}
+
+		cli, err := ssh.Dial(
+			"tcp",
+			net.JoinHostPort("localhost", ts.Getenv("SSH_PORT")),
+			&ssh.ClientConfig{
+				User:            "admin",
+				Auth:            []ssh.AuthMethod{ssh.PublicKeys(key)},
+				HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+			},
+		)
+		ts.Check(err)
+		defer cli.Close()
+
+		sess, err := cli.NewSession()
+		ts.Check(err)
+		defer sess.Close()
+
+		// XXX: this is a hack to make the UI tests work
+		// cmp command always complains about an extra newline
+		// in the output
+		defer ts.Stdout().Write([]byte("\n"))
+
+		sess.Stdout = ts.Stdout()
+		sess.Stderr = ts.Stderr()
+
+		stdin, err := sess.StdinPipe()
+		ts.Check(err)
+
+		go func() {
+			defer stdin.Close()
+			in := ts.ReadFile(args[0])
+			_, err := io.Copy(stdin, strings.NewReader(in))
+			ts.Check(err)
+		}()
+
+		err = sess.RequestPty("xterm-256color", 40, 80, ssh.TerminalModes{})
+		ts.Check(err)
+
+		check(ts, sess.Run(""), neg)
+	}
+}
+
+var keyToRune = map[string]rune{
+	"esc": rune(tea.KeyEscape),
 }
 
 // P.S. Windows sucks!
