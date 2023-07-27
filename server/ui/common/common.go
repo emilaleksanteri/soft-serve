@@ -3,6 +3,7 @@ package common
 import (
 	"context"
 
+	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/log"
 	"github.com/charmbracelet/soft-serve/git"
 	"github.com/charmbracelet/soft-serve/server/backend"
@@ -31,12 +32,13 @@ type Common struct {
 	Styles        *styles.Styles
 	KeyMap        *keymap.KeyMap
 	Zone          *zone.Manager
+	Renderer      *lipgloss.Renderer
 	Output        *termenv.Output
 	Logger        *log.Logger
 }
 
 // NewCommon returns a new Common struct.
-func NewCommon(ctx context.Context, out *termenv.Output, width, height int) Common {
+func NewCommon(ctx context.Context, re *lipgloss.Renderer, width, height int) Common {
 	if ctx == nil {
 		ctx = context.TODO()
 	}
@@ -44,7 +46,7 @@ func NewCommon(ctx context.Context, out *termenv.Output, width, height int) Comm
 		ctx:    ctx,
 		Width:  width,
 		Height: height,
-		Output: out,
+		Output: re.Output(),
 		Styles: styles.DefaultStyles(),
 		KeyMap: keymap.DefaultKeyMap(),
 		Zone:   zone.New(),
