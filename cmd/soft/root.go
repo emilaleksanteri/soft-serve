@@ -18,8 +18,6 @@ import (
 	"github.com/charmbracelet/soft-serve/server/version"
 	"github.com/spf13/cobra"
 	"go.uber.org/automaxprocs/maxprocs"
-
-	_ "modernc.org/sqlite" // sqlite driver
 )
 
 var (
