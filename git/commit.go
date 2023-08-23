@@ -1,11 +1,19 @@
 package git
 
 import (
+	"regexp"
+
 	"github.com/gogs/git-module"
 )
 
 // ZeroHash is the zero hash.
 var ZeroHash Hash = git.EmptyID
+
+// IsZeroHash returns whether the hash is a zero hash.
+func IsZeroHash(h Hash) bool {
+	pattern := regexp.MustCompile(`^[0]+$`)
+	return pattern.MatchString(h.String())
+}
 
 // Hash represents a git hash.
 type Hash string
